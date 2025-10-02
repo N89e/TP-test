@@ -146,6 +146,15 @@ public class LibraryTest {
     }
 
     @Test
+    public void testCheckExternalAvailabilityWithoutServiceConfigured() {
+        Library libSansService = new Library(); // pas de service externe injecté
+        IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> {
+            libSansService.checkExternalAvailability("Titre");
+        });
+        assertEquals("External service not configured", thrown.getMessage());
+    }
+
+    @Test
     public void testImportBookFromExternalSuccess() {
         Book externalBook = new Book("TitreExterne", "AuteurExterne");
 
