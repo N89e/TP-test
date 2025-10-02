@@ -116,6 +116,12 @@ public class LibraryTest {
         assertTrue(book.isDisponible());
     }
 
+    @Test
+    public void testReturnBookReturnsFalseWhenNotFound() {
+        Library library = new Library();
+        assertFalse(library.returnBook("LivreInexistant"));
+    }
+
     @ParameterizedTest
     @CsvSource({
             "3,1,2",
