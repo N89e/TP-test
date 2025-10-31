@@ -21,8 +21,14 @@ pipeline {
 
         stage('Backup') {
             steps {
-                echo "💾 Sauvegarde du répertoire..."
-                sh 'cp -r /var/www/html /var/www/html.backup  true'
+                echo '💾 Sauvegarde du répertoire...'
+                sh '''
+                    if [ -d /var/www/html ]; then
+                        cp -r /var/www/html /var/www/html.backup
+                    else
+                        echo "/var/www/html n'existe pas, pas de sauvegarde"
+                    fi
+                '''
             }
         }
 
@@ -52,13 +58,11 @@ pipeline {
         failure {
             echo "❌ Le déploiement a échoué."
         }
-        always {
-            echo "🧹 Nettoyage..."
-            sh '''
-                rm -rf /var/www/html/*
-                apt remove -y apache2  true
-                apt autoremove -y || true
-            '''
-        }
+    always {
+        echo '🧹 Nettoyage...'
+        sh 'rm -rf /var/www/html/index.html'
+        sh 'sudo apt remove -y apache2'
+        sh 'rm -rf /var/www/html.backup'
+    }
     }
 }
