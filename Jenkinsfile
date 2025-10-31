@@ -5,12 +5,12 @@ pipeline {
     stages {
         stage("Dependances") {
             steps {
-                echo '🔧 Installation d\'Apache2 avec sudo...'
+                echo '🔧 Vérification et installation d\'Apache2...'
                 sh '''
                     if command -v apache2 >/dev/null 2>&1; then
                         echo "Apache2 est déjà installé."
                     else
-                        echo "Apache2 non trouvé. Installation avec sudo..."
+                        echo "Non trouvé. Installation avec sudo..."
                         sudo apt update -y && sudo apt install -y apache2
                     fi
                 '''
@@ -31,7 +31,7 @@ pipeline {
                     if [ -d /var/www/html ]; then
                         cp -r /var/www/html /var/www/html.backup
                     else
-                        echo "/var/www/html n'existe pas, pas de sauvegarde"
+                        echo "/var/www/html n'existe pas, pas de sauvegarde."
                     fi
                 '''
             }
@@ -39,7 +39,7 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                echo '🚀 Déploiement du site avec sudo...'
+                echo '🚀 Déploiement du site...'
                 sh 'sudo cp index.html /var/www/html/index.html'
             }
         }
@@ -48,9 +48,9 @@ pipeline {
             steps {
                 echo "🔍 Vérification..."
                 sh '''
-                    service apache2 start  true
+                    sudo service apache2 start || echo "Impossible de démarrer Apache."
                     sleep 3
-                    curl -f http://localhost
+                    curl -f http://localhost || (echo "Erreur d'accès" && exit 1)
                 '''
             }
         }
@@ -64,12 +64,15 @@ pipeline {
             echo "❌ Le déploiement a échoué."
         }
         always {
-            echo '🧹 Nettoyage avec sudo...'
+            echo '🧹 Nettoyage...'
             sh '''
                 if [ -w /var/www/html/index.html ]; then
-                    sudo rm -rf /var/www/html/index.html
+                    sudo rm -f /var/www/html/index.html
                 else
                     echo "Pas les droits pour supprimer /var/www/html/index.html"
+                fi
+                if [ -d /var/www/html.backup ]; then
+                    sudo rm -rf /var/www/html.backup
                 fi
             '''
         }
