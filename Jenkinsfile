@@ -3,12 +3,16 @@ pipeline {
         label "agent"
     }
     stages {
-        stage('Dependances') {
+        stage("Dependances") {
             steps {
-                echo "🔧 Installation d'Apache2..."
+                echo '🔧 Installation d\'Apache2 avec sudo...'
                 sh '''
-                    apt update -y
-                    apt install -y apache2
+                    if command -v apache2 >/dev/null 2>&1; then
+                        echo "Apache2 est déjà installé."
+                    else
+                        echo "Apache2 non trouvé. Installation avec sudo..."
+                        sudo apt update -y && sudo apt install -y apache2
+                    fi
                 '''
             }
         }
@@ -35,13 +39,10 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                echo '🚀 Déploiement du site...'
-                sh 'cp index.html /var/www/html/index.html'
+                echo '🚀 Déploiement du site avec sudo...'
+                sh 'sudo cp index.html /var/www/html/index.html'
             }
         }
-
-
-
 
         stage('Test') {
             steps {
@@ -62,11 +63,15 @@ pipeline {
         failure {
             echo "❌ Le déploiement a échoué."
         }
-    always {
-        echo '🧹 Nettoyage...'
-        sh 'rm -rf /var/www/html/index.html'
-        sh 'apt remove -y apache2'
-        sh 'rm -rf /var/www/html.backup'
-    }
+        always {
+            echo '🧹 Nettoyage avec sudo...'
+            sh '''
+                if [ -w /var/www/html/index.html ]; then
+                    sudo rm -rf /var/www/html/index.html
+                else
+                    echo "Pas les droits pour supprimer /var/www/html/index.html"
+                fi
+            '''
+        }
     }
 }
