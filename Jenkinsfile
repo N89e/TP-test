@@ -21,10 +21,10 @@ pipeline {
         }
         stage('Deploy') {
             steps {
-                echo 'Déploiement du site web...'
-                // sh 'sudo cp index.html /var/www/html/index.html'
+                sh 'sudo cp index.html /var/www/html/index.html'
             }
         }
+
         stage('Test') {
             steps {
                 echo 'Vérification du déploiement...'
