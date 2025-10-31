@@ -7,8 +7,8 @@ pipeline {
             steps {
                 echo "🔧 Installation d'Apache2..."
                 sh '''
-                    apt update -y
-                    apt install -y apache2
+                    sudo apt update -y
+                    sudo apt install -y apache2
                 '''
             }
         }
