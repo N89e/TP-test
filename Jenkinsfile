@@ -34,13 +34,10 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                echo 'Déploiement vers le serveur distant...'
-                sh '''
-                    scp index.html user@j1.sfkb.ovh:/var/www/html/index.html
-                    ssh user@j1.sfkb.ovh "sudo systemctl restart apache2"
-                '''
+                sh 'sudo cp index.html /var/www/html/index.html'
             }
         }
+
 
 
         stage('Test') {
@@ -49,7 +46,7 @@ pipeline {
                 sh '''
                     service apache2 start  true
                     sleep 3
-                    curl -f http://localhost/  exit 1
+                    curl -f http://localhost
                 '''
             }
         }
@@ -65,7 +62,7 @@ pipeline {
     always {
         echo '🧹 Nettoyage...'
         sh 'rm -rf /var/www/html/index.html'
-        sh 'sudo apt remove -y apache2'
+        sh 'apt remove -y apache2'
         sh 'rm -rf /var/www/html.backup'
     }
     }
