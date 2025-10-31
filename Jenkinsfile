@@ -4,18 +4,24 @@ pipeline {
     stages {
         stage("Dependances") {
             steps {
-                echo 'Dependances...'
+                echo 'Installation des dépendances...'
             }
         }
         stage('Checkout') {
             steps {
                 echo 'Récupération du code...'
-                // Example: checkout scm
+                checkout scm
+            }
+        }
+        stage('Backup') {
+            steps {
+                echo 'Sauvegarde de /var/www/html...'
+                sh 'cp -r /var/www/html /var/www/html.backup'
             }
         }
         stage('Deploy') {
             steps {
-                echo 'Copie des fichiers vers le serveur web...'
+                echo 'Déploiement du site web...'
                 // sh 'sudo cp index.html /var/www/html/index.html'
             }
         }
@@ -34,9 +40,10 @@ pipeline {
             echo 'Le pipeline a échoué.'
         }
         always {
-            echo 'Nettoyage...'
+            echo 'Nettoyage en cours...'
             // sh 'sudo rm -f /var/www/html/index.html'
             // sh 'sudo apt purge -y apache2'
+            // sh 'rm -rf /var/www/html.backup'
         }
     }
 }
