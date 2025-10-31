@@ -1,5 +1,7 @@
 pipeline {
-agent any
+        agent {
+                label "deploy-site-web"
+        }
 stages {
 stage("Dependances") {
 steps {
