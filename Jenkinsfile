@@ -3,7 +3,14 @@ agent any
 stages {
 stage("Dependances") {
 steps {
-// Installer apache2
+stages {
+        stage('Setup Apache2 et déploiement index.html') {
+            steps {
+                sh 'chmod +x setup_apache.sh'
+                sh './setup_apache.sh'
+            }
+        }
+    }
 }
 }
 stage('Checkout') {
