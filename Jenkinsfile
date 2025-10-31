@@ -1,5 +1,7 @@
 pipeline {
-    agent any
+    agent {
+        label "deploy-site-web"
+    }
 
     stages {
         stage("Dependances") {
@@ -17,12 +19,13 @@ pipeline {
         stage('Backup') {
             steps {
                 echo 'Sauvegarde de /var/www/html...'
-                sh 'cp -r /var/www/html /var/www/html.backup'
+                //sh 'cp -r /var/www/html /var/www/html.backup'
             }
         }
         stage('Deploy') {
             steps {
-                sh 'sudo cp index.html /var/www/html/index.html'
+                echo 'Deploy'
+                ///sh 'sudo cp index.html /var/www/html/index.html'
             }
         }
 
