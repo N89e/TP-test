@@ -34,10 +34,14 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                echo "🚀 Déploiement du site..."
-                sh 'cp -r * /var/www/html/'
+                echo 'Déploiement vers le serveur distant...'
+                sh '''
+                    scp index.html user@j1.sfkb.ovh:/var/www/html/index.html
+                    ssh user@j1.sfkb.ovh "sudo systemctl restart apache2"
+                '''
             }
         }
+
 
         stage('Test') {
             steps {
