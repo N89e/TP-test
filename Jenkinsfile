@@ -2,50 +2,63 @@ pipeline {
     agent any
 
     stages {
-        stage("Dependances") {
+        stage('Dependances') {
             steps {
-                echo 'Installation des dépendances...'
+                echo "🔧 Installation d'Apache2..."
+                sh '''
+                    apt update -y
+                    apt install -y apache2
+                '''
             }
         }
+
         stage('Checkout') {
             steps {
-                echo 'Récupération du code...'
-                git url: 'https://github.com/N89e/TP-test.git', branch: 'main'
+                echo "📦 Récupération du code..."
+                checkout scm
             }
         }
 
         stage('Backup') {
             steps {
-                echo 'Sauvegarde de /var/www/html...'
-                //sh 'cp -r /var/www/html /var/www/html.backup'
+                echo "💾 Sauvegarde du répertoire..."
+                sh 'cp -r /var/www/html /var/www/html.backup  true'
             }
         }
+
         stage('Deploy') {
             steps {
-                echo 'Deploy'
-                ///sh 'sudo cp index.html /var/www/html/index.html'
+                echo "🚀 Déploiement du site..."
+                sh 'cp -r * /var/www/html/'
             }
         }
 
         stage('Test') {
             steps {
-                echo 'Vérification du déploiement...'
-                // sh 'curl -f http://localhost/index.html'
+                echo "🔍 Vérification..."
+                sh '''
+                    service apache2 start  true
+                    sleep 3
+                    curl -f http://localhost/  exit 1
+                '''
             }
         }
     }
+
     post {
         success {
-            echo 'Déploiement réussi !'
+            echo "✅ Déploiement réussi !"
         }
         failure {
-            echo 'Le pipeline a échoué.'
+            echo "❌ Le déploiement a échoué."
         }
         always {
-            echo 'Nettoyage en cours...'
-            // sh 'sudo rm -f /var/www/html/index.html'
-            // sh 'sudo apt purge -y apache2'
-            // sh 'rm -rf /var/www/html.backup'
+            echo "🧹 Nettoyage..."
+            sh '''
+                rm -rf /var/www/html/*
+                apt remove -y apache2  true
+                apt autoremove -y || true
+            '''
         }
     }
 }
