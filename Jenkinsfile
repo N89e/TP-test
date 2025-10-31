@@ -10,9 +10,10 @@ pipeline {
         stage('Checkout') {
             steps {
                 echo 'Récupération du code...'
-                checkout scm
+                git url: 'https://github.com/N89e/TP-test.git', branch: 'main'
             }
         }
+
         stage('Backup') {
             steps {
                 echo 'Sauvegarde de /var/www/html...'
