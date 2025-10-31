@@ -34,9 +34,11 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                sh 'sudo cp index.html /var/www/html/index.html'
+                echo '🚀 Déploiement du site...'
+                sh 'cp index.html /var/www/html/index.html'
             }
         }
+
 
 
 
