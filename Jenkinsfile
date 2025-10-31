@@ -4,8 +4,7 @@ pipeline {
     stages {
         stage("Dependances") {
             steps {
-                sh 'chmod +x setup_apache.sh'
-                sh './setup_apache.sh'
+                echo 'Dependances...'
             }
         }
         stage('Checkout') {
